@@ -1,0 +1,10 @@
+{
+  "headers": [
+    {
+      "source": "/raw/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}

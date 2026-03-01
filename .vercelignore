@@ -1,0 +1,6 @@
+books/
+node_modules/
+.git/
+.claude/
+organize.js
+install-bookmarklet.html

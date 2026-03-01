@@ -1,12 +1,12 @@
 # marginalia
 
-Extract, organize, and browse your Kindle highlights locally. No subscription, no cloud dependency — just your highlights on your machine.
+Extract, organize, and browse your Kindle highlights. No subscription, no cloud dependency.
 
 ## What it does
 
 1. **Scrapes** your highlights from [read.amazon.com/notebook](https://read.amazon.com/notebook) via a bookmarklet
 2. **Organizes** them into per-book Markdown files
-3. **Serves** a clean local website to search and browse everything
+3. **Serves** a clean website to search and browse everything
 
 ## Quick start
 
@@ -25,22 +25,35 @@ npx serve -l 3456
 # Open http://localhost:3456
 ```
 
+## Deployment
+
+The site can be deployed to Vercel for access from anywhere:
+
+```bash
+# First time
+npx vercel --yes --prod
+
+# Re-deploy after syncing new highlights
+npx vercel --prod
+```
+
+Your highlight data deploys from your local machine — it's gitignored and never committed to the repo.
+
+## Re-syncing
+
+1. Log into [read.amazon.com/notebook](https://read.amazon.com/notebook)
+2. Click the bookmarklet (~30 seconds for 200+ books)
+3. Move `kindle-export.json` to `raw/`
+4. Run `node organize.js` to update Markdown files
+5. Run `npx vercel --prod` to update the live site
+
 ## Project structure
 
 ```
 raw/                      # Your exported JSON (gitignored)
 books/                    # Generated Markdown per book (gitignored)
-index.html                # Local website to browse highlights
+index.html                # Website to browse highlights
 organize.js               # JSON -> Markdown converter
 install-bookmarklet.html  # Bookmarklet installer page
+vercel.json               # Vercel deployment config
 ```
-
-## Re-syncing
-
-Whenever you want fresh highlights:
-1. Log into [read.amazon.com/notebook](https://read.amazon.com/notebook)
-2. Click the bookmarklet
-3. Replace `raw/kindle-export.json` with the new download
-4. Run `node organize.js`
-
-Your personal highlight data stays local and is never committed to the repo.
