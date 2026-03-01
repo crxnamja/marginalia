@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kindle Highlights Exporter - Bookmarklet</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; color: #333; }
+  h1 { font-size: 1.4em; }
+  .bookmarklet-link { display: inline-block; padding: 12px 24px; background: #232f3e; color: #ff9900; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1.1em; margin: 16px 0; }
+  .bookmarklet-link:hover { background: #37475a; }
+  ol li { margin-bottom: 8px; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+  .note { background: #fff8e1; border-left: 4px solid #ff9900; padding: 12px; margin: 16px 0; }
+</style>
+</head>
+<body>
+<h1>Kindle Highlights Exporter</h1>
+<p>Drag this button to your bookmarks bar:</p>
+
+<a class="bookmarklet-link" href="javascript:void(function(){var s=document.createElement('div');s.id='kh-status';s.style.cssText='position:fixed;top:10px;right:10px;background:%23232f3e;color:%23ff9900;padding:12px 20px;border-radius:8px;z-index:99999;font:14px sans-serif;';document.body.appendChild(s);var books=[],bookEls=document.querySelectorAll('.kp-notebook-library-each-book'),total=bookEls.length;function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}function scrape(){var hl=[];var rows=document.querySelectorAll('%23kp-notebook-annotations > .a-row.a-spacing-base');for(var i=0;i<rows.length;i++){var r=rows[i],he=r.querySelector('%23highlight'),hd=r.querySelector('%23annotationHighlightHeader'),ne=r.querySelector('%23note'),hv=r.querySelector('.kp-notebook-highlight');if(!he||!he.textContent.trim())continue;var c='unknown';if(hv){if(hv.classList.contains('kp-notebook-highlight-yellow'))c='yellow';else if(hv.classList.contains('kp-notebook-highlight-blue'))c='blue';else if(hv.classList.contains('kp-notebook-highlight-pink'))c='pink';else if(hv.classList.contains('kp-notebook-highlight-orange'))c='orange'}var lm=hd?hd.textContent.match(/Location:\s*([\d,]+)/):null;var pm=hd?hd.textContent.match(/Page:\s*([\d,]+)/):null;hl.push({text:he.textContent.trim(),color:c,location:lm?parseInt(lm[1].replace(',','')):null,page:pm?parseInt(pm[1].replace(',','')):null,note:(ne&&ne.textContent.trim())?ne.textContent.trim():null})}return hl}async function run(){for(var i=0;i<bookEls.length;i++){s.textContent='Scraping '+(i+1)+'/'+total+'...';var b=bookEls[i],t=b.querySelector('h2'),a=b.querySelector('p'),lk=b.querySelector('a');if(lk)lk.click();else b.click();await sleep(1500);books.push({asin:b.id,title:t?t.textContent.trim():'Unknown',author:a?a.textContent.replace(/^By:\s*/,'').trim():'Unknown',highlights:scrape()})}s.textContent='Done! Downloading...';var blob=new Blob([JSON.stringify(books,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var dl=document.createElement('a');dl.href=url;dl.download='kindle-export.json';dl.click();URL.revokeObjectURL(url);s.textContent='Export complete! '+books.length+' books';setTimeout(function(){s.remove()},5000)}run()})();">Export Kindle Highlights</a>
+
+<h2>How to use</h2>
+<ol>
+  <li><strong>Drag</strong> the orange button above to your bookmarks bar</li>
+  <li>Go to <a href="https://read.amazon.com/notebook" target="_blank">read.amazon.com/notebook</a> and log in</li>
+  <li>Click the <strong>"Export Kindle Highlights"</strong> bookmark</li>
+  <li>Wait while it scrapes all your books (progress shown in top-right corner)</li>
+  <li>A <code>kindle-export.json</code> file will download automatically</li>
+  <li>Move the JSON to <code>kindle-highlights/raw/</code> and run: <code>node organize.js</code></li>
+</ol>
+
+<div class="note">
+  <strong>Tip:</strong> The scraper takes about 1.5 seconds per book. If you have 200+ books, expect it to take 5-6 minutes.
+</div>
+</body>
+</html>
