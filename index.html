@@ -295,7 +295,7 @@
         <span class="sync-dot gray" id="syncDot"></span>
         <span id="syncText">Loading...</span>
       </div>
-      <a class="sync-link" href="https://read.amazon.com/notebook" target="_blank" rel="noopener">Sync now &rarr;</a>
+      <a class="sync-link" href="#" id="syncLink" onclick="navigator.clipboard.writeText('/sync-kindle');this.textContent='Copied! Paste in Claude';setTimeout(()=>{this.textContent='Sync now \u2192'},2000);return false;">Sync now &rarr;</a>
     </div>
     <div class="search-box">
       <input type="text" id="search" placeholder="Search books and highlights..." />
